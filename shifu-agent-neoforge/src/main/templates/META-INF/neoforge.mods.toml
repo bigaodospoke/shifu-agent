@@ -1,0 +1,29 @@
+modLoader="javafml"
+loaderVersion="${loader_version_range}"
+license="${mod_license}"
+issueTrackerURL="https://modrinth.com/mod/shifu-agent"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+authors="${mod_authors}"
+# O texto fica aqui (UTF-8) e não no gradle.properties, que o Gradle lê em ISO-8859-1 e estraga os acentos
+description='''Conecta o servidor à plataforma Shifu e entrega compras automaticamente.'''
+displayURL="https://shifu-plataforma.vercel.app"
+# Mod só de servidor: quem joga pode entrar sem ter o mod instalado
+displayTest="IGNORE_ALL_VERSION"
+
+[[dependencies.${mod_id}]]
+	modId="neoforge"
+	type="required"
+	versionRange="${neo_version_range}"
+	ordering="NONE"
+	side="SERVER"
+
+[[dependencies.${mod_id}]]
+	modId="minecraft"
+	type="required"
+	versionRange="${minecraft_version_range}"
+	ordering="NONE"
+	side="SERVER"

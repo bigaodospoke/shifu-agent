@@ -1,0 +1,91 @@
+// Build do Shifu Agent (Fabric 1.21.1 / Java 21).
+// Para compilar: ./gradlew build   (Windows: gradlew.bat build)
+// O .jar final aparece em build/libs/shifu-agent-<versão>.jar
+plugins {
+	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
+	// Publica o .jar no Modrinth (e na CurseForge) com: gradlew publishMods
+	id 'me.modmuss50.mod-publish-plugin' version "2.2.0"
+}
+
+loom {
+	mods {
+		"shifu_agent" {
+			sourceSet sourceSets.main
+		}
+	}
+}
+
+dependencies {
+	// As versões ficam no gradle.properties
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	// Nomes oficiais da Mojang (ServerPlayer, CommandSourceStack, Component...)
+	mappings loom.officialMojangMappings()
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+	// Nenhum outro mod é dependência: as entregas são comandos de console,
+	// então o mesmo .jar funciona com qualquer combinação de mods.
+
+	// Testes automatizados (./gradlew test) — ficam em src/test/java
+	testImplementation platform("org.junit:junit-bom:6.1.3")
+	testImplementation "org.junit.jupiter:junit-jupiter"
+	testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+
+test {
+	useJUnitPlatform()
+}
+
+processResources {
+	def version = project.version
+	inputs.property "version", version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 21
+	// Os comentários e mensagens estão em português: garante acentos corretos no Windows
+	it.options.encoding = "UTF-8"
+}
+
+java {
+	withSourcesJar()
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}
+
+// Publicação de uma nova versão:
+//   1. suba "version" no gradle.properties e escreva as novidades no CHANGELOG.md
+//   2. MODRINTH_TOKEN=mrp_... (e CURSEFORGE_TOKEN=...) gradlew publishMods
+// Sem MODRINTH_TOKEN roda em modo de teste (dryRun): monta tudo e não envia nada.
+// A CurseForge só entra quando curseforge_project_id estiver no gradle.properties.
+publishMods {
+	file = remapJar.archiveFile
+	changelog = file("CHANGELOG.md").text
+	type = BETA
+	modLoaders.add("fabric")
+	displayName = "Shifu Agent ${project.version}"
+	version = project.version.toString()
+	dryRun = providers.environmentVariable("MODRINTH_TOKEN").getOrNull() == null
+
+	modrinth {
+		projectId = project.modrinth_project_id
+		accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+		minecraftVersions.add(project.minecraft_version)
+		requires("fabric-api")
+	}
+
+	if (project.findProperty("curseforge_project_id")) {
+		curseforge {
+			projectId = project.curseforge_project_id
+			accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+			minecraftVersions.add(project.minecraft_version)
+			client = false
+			server = true
+			requires("fabric-api")
+		}
+	}
+}

@@ -1,0 +1,105 @@
+// Build do Shifu Agent para NeoForge 1.21.1 (Java 21).
+// Para compilar: ./gradlew build   (Windows: gradlew.bat build)
+// O .jar final aparece em build/libs/shifu_agent-neoforge-<versão>.jar
+//
+// O CÓDIGO É O MESMO da versão Fabric: este projeto compila os arquivos de ../shifu-agent
+// (API, config, fila, comandos, logs — todos usam só classes do Minecraft) e troca apenas o
+// ponto de entrada, que é a única parte específica de cada carregador de mods.
+plugins {
+	id 'java-library'
+	id 'net.neoforged.moddev' version "${moddev_version}"
+	// Publica o .jar no Modrinth (e na CurseForge) com: gradlew publishMods
+	id 'me.modmuss50.mod-publish-plugin' version '2.2.0'
+}
+
+version = mod_version
+group = mod_group_id
+
+base {
+	archivesName = "${mod_id}-neoforge"
+}
+
+java {
+	toolchain.languageVersion = JavaLanguageVersion.of(21)
+	withSourcesJar()
+}
+
+// Código compartilhado com a versão Fabric (as duas pastas precisam estar lado a lado)
+sourceSets.main.java {
+	srcDir file('../shifu-agent/src/main/java')
+	exclude 'gg/shifu/agent/ShifuAgentMod.java' // ponto de entrada do Fabric
+}
+
+neoForge {
+	version = neo_version
+
+	mods {
+		"${mod_id}" {
+			sourceSet sourceSets.main
+		}
+	}
+
+	runs {
+		// ./gradlew runServer sobe um servidor de teste com o mod
+		server {
+			server()
+			programArgument '--nogui'
+		}
+	}
+}
+
+// Preenche as versões no neoforge.mods.toml (que fica em src/main/templates)
+var generateModMetadata = tasks.register('generateModMetadata', ProcessResources) {
+	var replaceProperties = [
+			minecraft_version_range: minecraft_version_range,
+			neo_version_range      : neo_version_range,
+			loader_version_range   : loader_version_range,
+			mod_id                 : mod_id,
+			mod_name               : mod_name,
+			mod_license            : mod_license,
+			mod_version            : mod_version,
+			mod_authors            : mod_authors,
+	]
+	inputs.properties replaceProperties
+	expand replaceProperties
+	from 'src/main/templates'
+	into 'build/generated/sources/modMetadata'
+}
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 21
+	// Os comentários e mensagens estão em português: garante acentos corretos no Windows
+	it.options.encoding = 'UTF-8'
+}
+
+// Publicação de uma nova versão:
+//   1. suba "mod_version" aqui e no ../shifu-agent/gradle.properties, e escreva as novidades no CHANGELOG
+//   2. MODRINTH_TOKEN=mrp_... gradlew publishMods
+// Sem MODRINTH_TOKEN roda em modo de teste (dryRun): monta tudo e não envia nada.
+publishMods {
+	file = jar.archiveFile
+	changelog = file('../shifu-agent/CHANGELOG.md').text
+	type = BETA
+	modLoaders.add('neoforge')
+	displayName = "Shifu Agent ${project.version} (NeoForge)"
+	version = "${project.version}+neoforge"
+	dryRun = providers.environmentVariable('MODRINTH_TOKEN').getOrNull() == null
+
+	modrinth {
+		projectId = project.modrinth_project_id
+		accessToken = providers.environmentVariable('MODRINTH_TOKEN')
+		minecraftVersions.add(project.minecraft_version)
+	}
+
+	if (project.findProperty('curseforge_project_id')) {
+		curseforge {
+			projectId = project.curseforge_project_id
+			accessToken = providers.environmentVariable('CURSEFORGE_TOKEN')
+			minecraftVersions.add(project.minecraft_version)
+			client = false
+			server = true
+		}
+	}
+}
