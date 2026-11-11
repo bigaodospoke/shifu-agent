@@ -2,12 +2,12 @@ Copyright (c) 2026 Kauã Batista do Nascimento (https://github.com/bigaodospoke)
 Copyright (c) 2026 Kauã Batista do Nascimento (https://github.com/bigaodospoke). All rights reserved.
 
 Este mod é obra de Kauã Batista do Nascimento. Não é permitido copiar, redistribuir, vender, publicar em outro lugar,
-modificar ou usar partes dele sem autorização por escrito do autor. O uso é permitido apenas no servidor
-Legends Cobblemon e no launcher oficial dele.
+modificar ou usar partes dele sem autorização por escrito do autor. O uso só é permitido onde o próprio autor
+colocar ou autorizar por escrito; nenhum servidor, launcher, pessoa ou projeto tem direito de uso sem essa autorização.
 
 This mod is the work of Kauã Batista do Nascimento. Copying, redistributing, selling, republishing, modifying or reusing parts of it
-without the author's written permission is not allowed. Use is permitted only on the Legends Cobblemon server and its
-official launcher.
+without the author's written permission is not allowed. Use is permitted only where the author himself installs it or
+authorizes it in writing; no server, launcher, person or project has any right to use it without that authorization.
 
 As versões publicadas antes desta data sob outra licença (por exemplo, MIT) continuam com a licença com que foram
 publicadas; as versões novas seguem este aviso.
