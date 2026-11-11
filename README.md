@@ -50,3 +50,7 @@ cd shifu-agent-neoforge && ./gradlew build     # NeoForge
 ```
 
 Detalhes de cada versão nos READMEs das pastas. Histórico de versões no [CHANGELOG](shifu-agent/CHANGELOG.md).
+
+## Licença / License
+
+Copyright (c) 2026 Kauã Batista do Nascimento ([bigaodospoke](https://github.com/bigaodospoke)). **Todos os direitos reservados / All rights reserved.** Veja o arquivo [LICENSE](LICENSE).

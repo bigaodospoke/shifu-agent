@@ -1,22 +1,27 @@
 {
-	"schemaVersion": 1,
-	"id": "shifu_agent",
-	"version": "${version}",
-	"name": "Shifu Agent",
-	"description": "Conecta o servidor à plataforma Shifu e entrega compras automaticamente.",
-	"authors": ["Shifu"],
-	"contact": {
-		"homepage": "https://shifu-plataforma.vercel.app"
-	},
-	"license": "All-Rights-Reserved",
-	"environment": "server",
-	"entrypoints": {
-		"main": ["gg.shifu.agent.ShifuAgentMod"]
-	},
-	"depends": {
-		"fabricloader": ">=0.19.5",
-		"minecraft": "~1.21.1",
-		"java": ">=21",
-		"fabric-api": "*"
-	}
+  "schemaVersion": 1,
+  "id": "shifu_agent",
+  "version": "${version}",
+  "name": "Shifu Agent",
+  "description": "Conecta o servidor à plataforma Shifu e entrega compras automaticamente.",
+  "authors": [
+    "Kauã Batista do Nascimento"
+  ],
+  "contact": {
+    "homepage": "https://github.com/bigaodospoke",
+    "sources": "https://github.com/bigaodospoke/shifu-agent"
+  },
+  "license": "All Rights Reserved",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      "gg.shifu.agent.ShifuAgentMod"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
 }
